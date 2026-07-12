@@ -61,9 +61,37 @@ To run all tests, you can use the following methods:
    docker-compose up -d
    ```
 
-## Test Structure
+### Running Integration Tests
 
-Unit tests are located in `tests/test_unit.py` and integration tests in `tests/test_integration.py`. The tests include mock testing capabilities to enable offline testing without a real S3 connection.
+Integration tests run against a real MinIO S3-compatible server. You can run them locally or they run automatically in CI.
+
+**Local run:**
+1. Start MinIO via Docker Compose:
+   ```bash
+   docker-compose up -d
+   ```
+2. Run integration tests (MinIO listens on port 5000 locally):
+   ```bash
+   S3_SERVER=http://localhost:5000 pytest tests/test_integration.py -v
+   ```
+   (Credentials default to `minioadmin`/`minioadmin`.)
+
+**CI run:**
+Integration tests run automatically on every push to `main`/`master` and on pull requests via `.github/workflows/minio-integration-tests.yml`. The workflow spins up a MinIO service, creates a unique test bucket per run, executes tests, and cleans up the bucket (even on failure, via `if: always()`).
+
+**Running unit tests only:**
+```bash
+pytest tests/test_unit.py
+```
+or skip integration tests anywhere:
+```bash
+pytest -m "not integration"
+```
+
+**Running integration tests only:**
+```bash
+pytest -m integration
+```
 
 ## Development Dependencies
 

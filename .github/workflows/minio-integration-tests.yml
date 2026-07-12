@@ -1,0 +1,78 @@
+name: MinIO Integration Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      minio:
+        image: minio/minio:latest
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        ports:
+          - 9000:9000
+          - 9001:9001
+        options: >-
+          --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+          --name minio-service
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install hatch
+          hatch env create dev
+          pip install python-dotenv
+
+      - name: Install MinIO client (mc)
+        run: |
+          curl https://raw.githubusercontent.com/minio/mc/master/archive/release/linux-amd64/install | bash -s
+
+      - name: Create unique test bucket
+        env:
+          AWS_ACCESS_KEY_ID: minioadmin
+          AWS_SECRET_ACCESS_KEY: minioadmin
+          AWS_ENDPOINT_URL: http://localhost:9000
+        run: |
+          TEST_BUCKET="test-bucket-${{ github.run_id }}-${{ github.run_number }}"
+          mc alias set myminio http://localhost:9000 minioadmin minioadmin
+          mc mb myminio/$TEST_BUCKET
+          echo "S3_BUCKET=$TEST_BUCKET" >> "$GITHUB_ENV"
+
+      - name: Run integration tests
+        env:
+          s3_server: http://localhost:9000
+          s3_access_key: minioadmin
+          s3_secret_key: minioadmin
+          s3_bucket: ${{ env.S3_BUCKET }}
+          s3_region: us-east-1
+        run: |
+          pytest tests/test_integration.py -v --tb=long
+
+      - name: Clean up test bucket
+        if: always()
+        env:
+          AWS_ACCESS_KEY_ID: minioadmin
+          AWS_SECRET_ACCESS_KEY: minioadmin
+          AWS_ENDPOINT_URL: http://localhost:9000
+        run: |
+          TEST_BUCKET="test-bucket-${{ github.run_id }}-${{ github.run_number }}"
+          mc alias set myminio http://localhost:9000 minioadmin minioadmin
+          mc rb --force myminio/$TEST_BUCKET || true

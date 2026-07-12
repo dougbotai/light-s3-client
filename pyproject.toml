@@ -51,5 +51,11 @@ test = [
 ]
 
 
+[tool.pytest.ini_options]
+markers = [
+    "integration: marks tests as integration tests (requires MinIO)",
+]
+addopts = "-m 'not integration'"
+
 [tool.hatch.build.targets.sdist]
 include = ["light_s3_client/**"]

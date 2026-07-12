@@ -60,7 +60,7 @@ IDs or file names. When cutting a new phase, take the next unused number **for y
 | [dacoburn-10](plan/phases/dacoburn-10-transport-hardening.md) | Transport hardening: timeouts + retry with backoff in `do_request` | planned — ready to implement | — |
 | [dacoburn-11](plan/phases/dacoburn-11-bucket-policy-and-cors.md) | Bucket policy (get/put/delete) + CORS (get/put/delete) | planned — ready to implement | dacoburn-1, dacoburn-4 |
 | [dacoburn-12](plan/phases/dacoburn-12-acls.md) | ACLs: canned ACLs, `get/put_object_acl`, `get/put_bucket_acl` | planned — ready to implement | dacoburn-1, dacoburn-4 |
-| [dacoburn-13](plan/phases/dacoburn-13-minio-docker-infrastructure.md) | MinIO Docker infrastructure: CI/CD workflow + local docker-compose for integration tests | planned — ready to implement | — |
+| [dacoburn-13](plan/phases/dacoburn-13-minio-docker-infrastructure.md) | MinIO Docker infrastructure: CI/CD workflow + local docker-compose for integration tests | awaiting verification | — |
 | [dacoburn-14](plan/phases/dacoburn-14-full-integration-test-suite.md) | Full integration test suite against MinIO: regression tests for all public Client methods | planned — ready to implement | dacoburn-13 |
 
 ## Ordering
