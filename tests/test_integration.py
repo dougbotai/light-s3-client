@@ -17,22 +17,26 @@ S3_SECRET_KEY = os.getenv("s3_secret_key", "minioadmin")
 S3_BUCKET = os.getenv("s3_bucket", "test-bucket")
 S3_REGION = os.getenv("s3_region", "us-east-1")
 
+
 @pytest.fixture(scope="module")
 def s3_client():
     return Client(
         access_key=S3_ACCESS_KEY,
         secret_key=S3_SECRET_KEY,
         region=S3_REGION,
-        server=S3_SERVER
+        server=S3_SERVER,
     )
+
 
 @pytest.fixture(scope="module")
 def test_key():
     return "integration_test_file.txt"
 
+
 @pytest.fixture(scope="module")
 def test_content():
     return b"Integration test content."
+
 
 @pytest.fixture(scope="module")
 def mock_response():
@@ -41,6 +45,31 @@ def mock_response():
     mock_resp.text = "<TestResponse></TestResponse>"
     mock_resp.content = b"<TestResponse></TestResponse>"
     return mock_resp
+
+
+@pytest.fixture(scope="module", autouse=True)
+def ensure_minio_available(s3_client):
+    """
+    Ensure MinIO is reachable and the test bucket exists before any
+    integration tests in this module run.
+    """
+    import requests
+
+    try:
+        resp = requests.get(f"{S3_SERVER}/minio/health/live", timeout=5)
+        assert resp.status_code == 200, f"MinIO health check failed: {resp.status_code}"
+    except requests.ConnectionError:
+        raise RuntimeError(
+            f"Cannot connect to MinIO at {S3_SERVER}. "
+            "Start it with: docker-compose up -d"
+        )
+
+    # Ensure the bucket exists
+    try:
+        s3_client.create_bucket(S3_BUCKET)
+    except Exception:
+        # Bucket may already exist — that's fine
+        pass
 
 @pytest.mark.integration
 def test_client_initialization():
