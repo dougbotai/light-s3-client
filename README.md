@@ -112,6 +112,60 @@ result = s3.delete_file("example-bucket", "path/example.json")
 print(f"Delete result: {result}")  # True if successful, False otherwise
 ```
 
+### Client.create_bucket(Bucket)
+
+Create an S3 bucket. Returns `True` if the bucket was created successfully, `False` if access was denied.
+
+**Usage:**
+
+```python
+from light_s3_client import Client
+
+s3 = Client(
+    region="us-west-1",
+    access_key="REPLACE_ME",
+    secret_key="REPLACE_ME"
+)
+result = s3.create_bucket("example-bucket")
+print(f"Create result: {result}")  # True if successful, False otherwise
+```
+
+### Client.delete_bucket(Bucket)
+
+Delete an S3 bucket. Returns `True` if the bucket was deleted successfully, `False` if not found. Bucket-not-empty errors propagate as `UnknownBucketError`.
+
+**Usage:**
+
+```python
+from light_s3_client import Client
+
+s3 = Client(
+    region="us-west-1",
+    access_key="REPLACE_ME",
+    secret_key="REPLACE_ME"
+)
+result = s3.delete_bucket("example-bucket")
+print(f"Delete result: {result}")  # True if successful, False otherwise
+```
+
+### Client.head_bucket(Bucket)
+
+Check if an S3 bucket exists. Returns `True` if the bucket exists, `False` otherwise.
+
+**Usage:**
+
+```python
+from light_s3_client import Client
+
+s3 = Client(
+    region="us-west-1",
+    access_key="REPLACE_ME",
+    secret_key="REPLACE_ME"
+)
+exists = s3.head_bucket("example-bucket")
+print(f"Bucket exists: {exists}")  # True if exists, False otherwise
+```
+
 ### Client.list_objects(Bucket, Prefix)
 
 List all keys in an S3 bucket with a given prefix.

@@ -1,5 +1,16 @@
 # AI Updates for light-s3-client
 
+## 2026-07-12 — dacoburn-1: bucket management core implemented (branch improvement/dacoburn-1-bucket-management-core)
+
+- Implemented `create_bucket(self, Bucket: str) -> bool` in `light_s3_client/buckets/__init__.py` — sends `PUT` with `CreateBucketConfiguration` body (via `xmltodict.unparse`) for non-us-east-1 regions; payload passed to signing for V4 coverage
+- Implemented `delete_bucket(self, Bucket: str) -> bool` in `light_s3_client/buckets/__init__.py` — sends `DELETE`, returns `True` on 204, `False` on `BucketNotFound`
+- Implemented `head_bucket(self, Bucket: str) -> bool` in `light_s3_client/buckets/__init__.py` — sends `HEAD`, returns `True` on 200, `False` on `BucketNotFound`
+- All three methods bound via `setattr` + `TYPE_CHECKING` stubs in `light_s3_client/__init__.py` (6 grep hits total)
+- 4 named unit tests added to `tests/test_unit.py` (offline, mocking `requests.request`): `test_create_bucket_returns_true_on_200`, `test_create_bucket_sends_location_constraint`, `test_delete_bucket_returns_true_on_204`, `test_head_bucket_false_when_missing`
+- Unit test count: 13 → 17 (all green)
+- Documentation updated in `README.md` and `ai-instructions.md`
+- Phase status set to `awaiting verification`
+
 ## Summary of Updates
 
 This file contains a summary of completed updates and changes to the light-s3-client library. Every planner/implementer/verifier session appends its entry here (newest on top) per `plan/working-agreement.md`; the phase index lives in `light-s3-client.md`.

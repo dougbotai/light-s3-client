@@ -1,8 +1,93 @@
 import pytest
 import io
-from unittest.mock import Mock, patch, MagicMock
+import xmltodict
+from unittest.mock import Mock, patch, MagicMock, call
 from light_s3_client import Client
-from light_s3_client.exceptions import S3Error
+from light_s3_client.exceptions import S3Error, BucketNotFound, AccessDeniedToBucket
+
+def test_create_bucket_returns_true_on_200():
+    """Test that create_bucket returns True on 200 response"""
+    client = Client(
+        access_key="test_access_key",
+        secret_key="test_secret_key",
+        region="us-east-1"
+    )
+    bucket = "test-bucket"
+    
+    with patch('requests.request') as mock_request:
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_request.return_value = mock_response
+        
+        result = client.create_bucket(bucket)
+        
+        assert result is True
+        assert mock_request.call_args[1]['method'] == "PUT"
+        assert mock_request.call_args[1]['url'] == f"{client.server}/{bucket}"
+
+
+def test_create_bucket_sends_location_constraint():
+    """Test that create_bucket sends LocationConstraint for non-us-east-1 regions"""
+    client = Client(
+        access_key="test_access_key",
+        secret_key="test_secret_key",
+        region="us-west-1"
+    )
+    bucket = "test-bucket"
+    
+    with patch('requests.request') as mock_request:
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_request.return_value = mock_response
+        
+        result = client.create_bucket(bucket)
+        
+        assert result is True
+        # Check that the request body contains the LocationConstraint
+        body = mock_request.call_args[1]['data']
+        parsed = xmltodict.parse(body)
+        assert parsed["CreateBucketConfiguration"]["LocationConstraint"] == "us-west-1"
+
+
+def test_delete_bucket_returns_true_on_204():
+    """Test that delete_bucket returns True on 204 response"""
+    client = Client(
+        access_key="test_access_key",
+        secret_key="test_secret_key",
+        region="us-east-1"
+    )
+    bucket = "test-bucket"
+    
+    with patch('requests.request') as mock_request:
+        mock_response = Mock()
+        mock_response.status_code = 204
+        mock_request.return_value = mock_response
+        
+        result = client.delete_bucket(bucket)
+        
+        assert result is True
+        assert mock_request.call_args[1]['method'] == "DELETE"
+
+
+def test_head_bucket_false_when_missing():
+    """Test that head_bucket returns False when bucket is not found (404)"""
+    client = Client(
+        access_key="test_access_key",
+        secret_key="test_secret_key",
+        region="us-east-1"
+    )
+    bucket = "nonexistent-bucket"
+    
+    with patch('requests.request') as mock_request:
+        mock_response = Mock()
+        mock_response.status_code = 404
+        mock_response.text = "<Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message></Error>"
+        mock_request.return_value = mock_response
+        
+        result = client.head_bucket(bucket)
+        
+        assert result is False
+
 
 def test_client_initialization():
     """Test that Client can be initialized properly"""

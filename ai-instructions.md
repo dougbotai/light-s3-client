@@ -116,6 +116,30 @@ Retrieves tags for an S3 object.
 - `Bucket` (str): The name of the bucket
 - `Key` (str): The key of the object to retrieve tags for
 
+### 10. `create_bucket(Bucket)`
+Creates an S3 bucket.
+
+**Parameters:**
+- `Bucket` (str): The name of the bucket to create
+
+**Returns:** `True` on 200, `False` on `AccessDeniedToBucket`
+
+### 11. `delete_bucket(Bucket)`
+Deletes an S3 bucket.
+
+**Parameters:**
+- `Bucket` (str): The name of the bucket to delete
+
+**Returns:** `True` on 204, `False` on `BucketNotFound`
+
+### 12. `head_bucket(Bucket)`
+Checks if an S3 bucket exists.
+
+**Parameters:**
+- `Bucket` (str): The name of the bucket to check
+
+**Returns:** `True` on 200, `False` on `BucketNotFound`
+
 ## Client Initialization Parameters
 
 | Property | Required | Type   | Default | Description |

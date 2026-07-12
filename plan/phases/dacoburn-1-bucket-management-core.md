@@ -1,6 +1,6 @@
 # Phase dacoburn-1: Bucket management core — create_bucket, delete_bucket, head_bucket
 
-> **Status:** planned — ready to implement
+> **Status:** awaiting verification
 > **Depends on:** —
 > **Read first:** [architecture.md](../architecture.md), [working-agreement.md](../working-agreement.md)
 > Work ONLY on this phase. Touch ONLY the files in its **Files** list.

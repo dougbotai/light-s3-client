@@ -48,7 +48,7 @@ IDs or file names. When cutting a new phase, take the next unused number **for y
 
 | Phase | Task | Status | Depends on |
 |-------|------|--------|------------|
-| [dacoburn-1](plan/phases/dacoburn-1-bucket-management-core.md) | Bucket management core: `create_bucket`, `delete_bucket`, `head_bucket` | planned — ready to implement | — |
+| [dacoburn-1](plan/phases/dacoburn-1-bucket-management-core.md) | Bucket management core: `create_bucket`, `delete_bucket`, `head_bucket` | awaiting verification | — |
 | [dacoburn-2](plan/phases/dacoburn-2-list-buckets-and-pagination.md) | `list_buckets` + `list_objects` pagination (continuation tokens, `MaxKeys`) | planned — ready to implement | — |
 | [dacoburn-3](plan/phases/dacoburn-3-get-object-content.md) | `get_object` content retrieval + `download_fileobj` (keep existence check as `object_exists`) | planned — ready to implement | — |
 | [dacoburn-4](plan/phases/dacoburn-4-copy-and-batch-delete.md) | `copy_object` + `delete_objects` (batch delete up to 1000 keys) | planned — ready to implement | dacoburn-3 |
