@@ -62,6 +62,7 @@ IDs or file names. When cutting a new phase, take the next unused number **for y
 | [dacoburn-12](plan/phases/dacoburn-12-acls.md) | ACLs: canned ACLs, `get/put_object_acl`, `get/put_bucket_acl` | planned — ready to implement | dacoburn-1, dacoburn-4 |
 | [dacoburn-13](plan/phases/dacoburn-13-minio-docker-infrastructure.md) | MinIO Docker infrastructure: CI/CD workflow + local docker-compose for integration tests | awaiting verification | — |
 | [dacoburn-14](plan/phases/dacoburn-14-full-integration-test-suite.md) | Full integration test suite against MinIO: regression tests for all public Client methods | planned — ready to implement | dacoburn-13 |
+| [dacoburn-15](plan/phases/dacoburn-15-workflow-owned-releases.md) | Workflow-owned releases: retire local version bumping; PR version-freeze check; regression-gated `release.yml` (bump → tag → GitHub Release → PyPI) | planned — ready to implement | dacoburn-13 |
 
 ## Ordering
 
@@ -71,6 +72,10 @@ Dependency-ordered, but independent phases may be taken in parallel by different
 pagination, content retrieval), then correctness (encoding/metadata), then the wider S3
 management surface. Phases **13 → 14** (MinIO infrastructure + integration tests) are
 independent and can be run in parallel with any feature phase, but 14 requires 13 first.
+Phase **15** (workflow-owned releases) also only needs 13 and should land **before the next
+PyPI release** — it removes the per-PR version-bump requirement that conflicts between
+parallel committers; ideally run it after 14 so the release regression gate has the full
+integration suite to lean on.
 
 ## Where to look
 

@@ -90,9 +90,11 @@ convention is for), but never pipeline multiple phases through one role in one s
    into `ai-updates.md`.** A claim without reproducible pasted output counts as NOT DONE.
 6. Append the session summary + all pasted outputs to `ai-updates.md` (newest on top).
 7. `git add -A && git commit -m "<phase>: <one-line summary>"` — ONE commit per session so the
-   verifier can diff exactly what you did. (The version-check pre-commit hook may bump
-   `version.py` and abort the first attempt — `git add` the version files and commit again;
-   that still counts as one work commit.)
+   verifier can diff exactly what you did. (Until phase dacoburn-15 lands: the legacy
+   version-check pre-commit hook may bump `version.py` and abort the first attempt —
+   `git add` the version files and commit again; that still counts as one work commit.
+   After dacoburn-15: NEVER touch `version.py`/the `pyproject.toml` version — versions are
+   owned by the release workflow and the PR freeze check will fail the session's PR.)
 8. Set the phase Status (phase file + index row in `light-s3-client.md`) to
    `awaiting verification`. **You NEVER set `✅ complete`.** You never edit `plan/defects.md`.
 

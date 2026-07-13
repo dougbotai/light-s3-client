@@ -1,5 +1,12 @@
 # AI Updates for light-s3-client
 
+## 2026-07-13 — PLANNER — phase dacoburn-15 cut: workflow-owned releases
+
+- New phase file `plan/phases/dacoburn-15-workflow-owned-releases.md` (status: planned — ready to implement; depends on dacoburn-13); index row added in `light-s3-client.md`.
+- Scope: invert `version-check.yml` into a version-freeze check (PRs must NOT touch version files), delete the `.hooks/pre-commit` local bump hook, restrict `sync_version.py` to `--dev` (workflow-side Test PyPI previews only), add `release.yml` (`workflow_dispatch` with patch/minor/major input) whose release job is gated on a regression job (unit + MinIO integration), add a `unit-tests` PR job, and rewrite the release docs. `python-publish.yml` stays the publish step.
+- Blast radius (grep of symbols the phase touches): `version-check.yml` (workflow logic replaced), `.hooks/pre-commit` + `.hooks/sync_version.py` (local-bump path removed; `--dev` still referenced by `python-publish-test.yml`), `minio-integration-tests.yml` (new job appended, owned by dacoburn-13 which is awaiting verification — no existing steps modified), `README-dev.md`/`ai-instructions.md` release sections. Zero files under `light_s3_client/` or `tests/`.
+- Working-agreement implementer step 7 updated to describe the version-handling rule before/after this phase lands.
+
 ## 2026-07-12 — dacoburn-1: bucket management core implemented (branch improvement/dacoburn-1-bucket-management-core)
 
 - Implemented `create_bucket(self, Bucket: str) -> bool` in `light_s3_client/buckets/__init__.py` — sends `PUT` with `CreateBucketConfiguration` body (via `xmltodict.unparse`) for non-us-east-1 regions; payload passed to signing for V4 coverage
